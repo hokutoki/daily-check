@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#F7F4EF">
+  <title>Daily Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #F7F4EF;
+      --bg-card: #FEFCF9;
+      --sage: #7A9E7E;
+      --sage-light: #B8D4BA;
+      --sage-pale: #EEF4EE;
+      --indigo: #7A85A8;
+      --indigo-light: #B8BDD4;
+      --indigo-pale: #EEEFF4;
+      --stone: #9E9A94;
+      --stone-light: #C8C5BF;
+      --stone-pale: #F0EDE8;
+      --warm-dark: #2C2A27;
+      --shadow-sm: 0 2px 12px rgba(44,42,39,0.06);
+      --shadow-md: 0 4px 24px rgba(44,42,39,0.10);
+      --radius: 18px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Noto Serif JP', serif;
+      color: var(--warm-dark);
+      min-height: 100svh;
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .app::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 15% 10%, rgba(122,158,126,0.09) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 85%, rgba(122,133,168,0.07) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 48px 20px 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--stone);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .header-date {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 300;
+      font-size: 24px;
+      color: var(--warm-dark);
+      line-height: 1.25;
+    }
+
+    .header-date span { font-weight: 400; }
+
+    .streak-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .streak-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--warm-dark);
+      color: var(--bg);
+      border-radius: 40px;
+      padding: 5px 13px 5px 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .streak-sub {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 11px;
+      color: var(--stone);
+      font-weight: 300;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--stone-pale);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--sage), var(--indigo));
+      border-radius: 4px;
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: 0%;
+    }
+
+    .progress-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--stone);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--stone-light), transparent);
+      margin: 20px 0;
+    }
+
+    /* ── Section ── */
+    .section-block {
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      color: var(--stone-light);
+      text-transform: uppercase;
+    }
+
+    .section-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .section-dot.exercise { background: var(--sage-light); }
+    .section-dot.habit    { background: var(--indigo-light); }
+
+    /* ── Cards ── */
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(200,197,191,0.4);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card.exercise::before {
+      background: radial-gradient(circle at 80% 50%, rgba(122,158,126,0.13) 0%, transparent 65%);
+    }
+
+    .card.habit::before {
+      background: radial-gradient(circle at 80% 50%, rgba(122,133,168,0.13) 0%, transparent 65%);
+    }
+
+    .card.done::before { opacity: 1; }
+    .card:active { transform: scale(0.972); }
+
+    .card-inner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Check circle */
+    .check-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--stone-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: var(--bg);
+    }
+
+    .check-circle svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s;
+    }
+
+    .card.exercise.done .check-circle {
+      background: var(--sage);
+      border-color: var(--sage);
+      box-shadow: 0 0 0 5px var(--sage-pale);
+    }
+
+    .card.habit.done .check-circle {
+      background: var(--indigo);
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 5px var(--indigo-pale);
+    }
+
+    .card.done .check-circle svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-top {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .card-emoji { font-size: 17px; line-height: 1; }
+
+    .card-title {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 400;
+      font-size: 17px;
+      color: var(--warm-dark);
+      letter-spacing: 0.03em;
+    }
+
+    .card-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--stone-light);
+      letter-spacing: 0.08em;
+      margin-top: 3px;
+    }
+
+    .card-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--stone-light);
+      margin-top: 5px;
+      transition: color 0.3s ease;
+    }
+
+    .card.exercise.done .card-status { color: var(--sage); }
+    .card.habit.done    .card-status { color: var(--indigo); }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple-anim 0.55s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .exercise .ripple { background: rgba(122,158,126,0.22); }
+    .habit    .ripple { background: rgba(122,133,168,0.22); }
+
+    @keyframes ripple-anim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% { box-shadow: 0 0 0 5px rgba(122,158,126,0.15); }
+      50%       { box-shadow: 0 0 0 8px rgba(122,158,126,0.05); }
+    }
+
+    @keyframes pulse-indigo {
+      0%, 100% { box-shadow: 0 0 0 5px rgba(122,133,168,0.15); }
+      50%       { box-shadow: 0 0 0 8px rgba(122,133,168,0.05); }
+    }
+
+    .card.exercise.just-done .check-circle { animation: pulse-subtle 1s ease 0.3s; }
+    .card.habit.just-done    .check-circle { animation: pulse-indigo  1s ease 0.3s; }
+
+    /* ── Completion banner ── */
+    .completion-banner {
+      background: linear-gradient(135deg, #5A8C5E 0%, #5A6A8A 100%);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+      box-shadow: var(--shadow-md);
+    }
+
+    .completion-banner.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .completion-icon { font-size: 26px; flex-shrink: 0; }
+
+    .completion-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14px;
+      color: white;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+
+    .completion-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 3px;
+      letter-spacing: 0.07em;
+    }
+
+    /* ── Weekly history ── */
+    .weekly-section { margin-top: 4px; }
+
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .week-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .week-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--stone-light);
+      letter-spacing: 0.06em;
+    }
+
+    .week-label.today { color: var(--warm-dark); font-weight: 400; }
+
+    .week-dots { display: flex; flex-direction: column; gap: 2px; }
+
+    .week-dot {
+      width: 100%;
+      height: 9px;
+      border-radius: 40px;
+      background: var(--stone-pale);
+      border: 1px solid rgba(200,197,191,0.35);
+      transition: all 0.3s ease;
+    }
+
+    .week-dot.exercise.done { background: var(--sage-light);   border-color: transparent; }
+    .week-dot.habit.done    { background: var(--indigo-light); border-color: transparent; }
+
+    .week-day.is-today .week-dot {
+      outline: 2px solid rgba(122,158,126,0.25);
+      outline-offset: 1px;
+    }
+
+    /* ── Bottom ── */
+    .reset-note {
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--stone-pale);
+      letter-spacing: 0.1em;
+      margin-top: 20px;
+    }
+
+    .bottom-space { height: 36px; }
+
+    /* Noise */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="app">
+    <div class="header">
+      <div class="header-eyebrow">Daily Check</div>
+      <div class="header-date" id="date-display"></div>
+      <div class="streak-wrap">
+        <div class="streak-pill">
+          <span>🔥</span>
+          <span id="streak-count">0</span> days
+        </div>
+        <div class="streak-sub" id="streak-label">継続中</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">0 / 4</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="divider"></div>
+      <div id="sections-container"></div>
+
+      <div class="completion-banner" id="completion-banner">
+        <div class="completion-icon">✨</div>
+        <div class="completion-text">
+          <div class="completion-title">今日も全部クリア！</div>
+          <div class="completion-sub" id="completion-sub">素晴らしい一日でした</div>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-top: 20px;"></div>
+
+      <div class="weekly-section">
+        <div class="section-header" style="margin-bottom:10px;">
+          <div class="section-label">過去7日間</div>
+        </div>
+        <div class="week-grid" id="week-grid"></div>
+      </div>
+
+      <div class="reset-note">毎日 0:00 にリセット</div>
+      <div class="bottom-space"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'daily-check-v2';
+
+    const SECTIONS = [
+      {
+        id: 'exercise',
+        label: '運動',
+        dotClass: 'exercise',
+        items: [
+          { id: 'kintore', emoji: '💪', title: '筋トレ',    sub: 'Strength Training' },
+          { id: 'stretch', emoji: '🧘', title: 'ストレッチ', sub: 'Stretching' },
+        ]
+      },
+      {
+        id: 'habit',
+        label: '習慣',
+        dotClass: 'habit',
+        items: [
+          { id: 'nikki',   emoji: '📔', title: '日記',   sub: 'Journal Writing' },
+          { id: 'review',  emoji: '📖', title: '復習',   sub: 'Study Review' },
+        ]
+      }
+    ];
+
+    const ALL_IDS = SECTIONS.flatMap(s => s.items.map(i => i.id));
+    const ID_TO_SECTION = {};
+    SECTIONS.forEach(s => s.items.forEach(i => { ID_TO_SECTION[i.id] = s.dotClass; }));
+
+    /* ── Storage ── */
+    function getTodayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function loadData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+    function getTodayEntry() {
+      const data = loadData();
+      const key = getTodayKey();
+      if (!data[key]) { data[key] = {}; ALL_IDS.forEach(id => { data[key][id] = false; }); }
+      return { data, key };
+    }
+
+    /* ── Build DOM ── */
+    function buildSections() {
+      const container = document.getElementById('sections-container');
+      SECTIONS.forEach(section => {
+        const block = document.createElement('div');
+        block.className = 'section-block';
+
+        const hdr = document.createElement('div');
+        hdr.className = 'section-header';
+        hdr.innerHTML = `<div class="section-dot ${section.dotClass}"></div><div class="section-label">${section.label}</div>`;
+        block.appendChild(hdr);
+
+        const cards = document.createElement('div');
+        cards.className = 'cards';
+
+        section.items.forEach(item => {
+          cards.innerHTML += `
+            <div class="card ${section.dotClass}" id="card-${item.id}" onclick="toggleActivity('${item.id}', event)">
+              <div class="card-inner">
+                <div class="check-circle">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-emoji">${item.emoji}</span>
+                    <span class="card-title">${item.title}</span>
+                  </div>
+                  <div class="card-subtitle">${item.sub}</div>
+                  <div class="card-status" id="status-${item.id}">タップしてチェック</div>
+                </div>
+              </div>
+            </div>`;
+        });
+
+        block.appendChild(cards);
+        container.appendChild(block);
+      });
+    }
+
+    /* ── Render ── */
+    function renderDate() {
+      const d = new Date();
+      const wd = ['日','月','火','水','木','金','土'][d.getDay()];
+      document.getElementById('date-display').innerHTML =
+        `${d.getFullYear()}年 <span>${d.getMonth()+1}月${d.getDate()}日（${wd}）</span>`;
+    }
+
+    function calcStreak() {
+      const data = loadData();
+      let streak = 0;
+      const d = new Date();
+      const todayKey = getTodayKey();
+      const todayEntry = data[todayKey] || {};
+      const todayDone = ALL_IDS.every(id => todayEntry[id]);
+
+      for (let i = todayDone ? 0 : 1; i < 365; i++) {
+        const dd = new Date(d);
+        dd.setDate(dd.getDate() - i);
+        const k = `${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}`;
+        const e = data[k] || {};
+        if (ALL_IDS.every(id => e[id])) streak++;
+        else break;
+      }
+      return streak;
+    }
+
+    function renderStreak() {
+      const s = calcStreak();
+      document.getElementById('streak-count').textContent = s;
+      const labels = s === 0 ? '今日から始めよう' : s < 3 ? '頑張れ！' : s < 7 ? '素晴らしい！' : '最高記録更新中！';
+      document.getElementById('streak-label').textContent = labels;
+    }
+
+    function renderProgress(today) {
+      const done = ALL_IDS.filter(id => today[id]).length;
+      const total = ALL_IDS.length;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = `${done} / ${total}`;
+    }
+
+    function renderCards() {
+      const { data, key } = getTodayEntry();
+      const today = data[key];
+
+      ALL_IDS.forEach(id => {
+        const card = document.getElementById(`card-${id}`);
+        const status = document.getElementById(`status-${id}`);
+        if (today[id]) {
+          card.classList.add('done');
+          const t = today[`${id}_time`];
+          status.textContent = t ? `${t} に完了 ✓` : '完了 ✓';
+        } else {
+          card.classList.remove('done');
+          status.textContent = 'タップしてチェック';
+        }
+      });
+
+      renderProgress(today);
+
+      const allDone = ALL_IDS.every(id => today[id]);
+      const banner = document.getElementById('completion-banner');
+      banner.classList.toggle('visible', allDone);
+      if (allDone) {
+        const s = calcStreak();
+        document.getElementById('completion-sub').textContent =
+          s > 1 ? `${s}日連続達成中 🎯` : '全項目コンプリート！';
+      }
+    }
+
+    function renderWeekGrid() {
+      const data = loadData();
+      const grid = document.getElementById('week-grid');
+      grid.innerHTML = '';
+      const wd = ['日','月','火','水','木','金','土'];
+      const today = new Date();
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const entry = data[k] || {};
+        const isToday = i === 0;
+
+        const col = document.createElement('div');
+        col.className = 'week-day' + (isToday ? ' is-today' : '');
+
+        const lbl = document.createElement('div');
+        lbl.className = 'week-label' + (isToday ? ' today' : '');
+        lbl.textContent = isToday ? '今日' : wd[d.getDay()];
+
+        const dotsWrap = document.createElement('div');
+        dotsWrap.className = 'week-dots';
+        dotsWrap.style.width = '100%';
+
+        ALL_IDS.forEach(id => {
+          const dot = document.createElement('div');
+          const sec = ID_TO_SECTION[id];
+          dot.className = `week-dot ${sec}` + (entry[id] ? ' done' : '');
+          dotsWrap.appendChild(dot);
+        });
+
+        col.appendChild(lbl);
+        col.appendChild(dotsWrap);
+        grid.appendChild(col);
+      }
+    }
+
+    /* ── Toggle ── */
+    function toggleActivity(id, event) {
+      const { data, key } = getTodayEntry();
+      const wasDone = data[key][id];
+      data[key][id] = !wasDone;
+
+      if (!wasDone) {
+        const now = new Date();
+        data[key][`${id}_time`] = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+        const card = document.getElementById(`card-${id}`);
+        const rect = card.getBoundingClientRect();
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple';
+        ripple.style.cssText = `left:${event.clientX-rect.left}px;top:${event.clientY-rect.top}px;width:80px;height:80px;margin:-40px 0 0 -40px;`;
+        card.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 650);
+
+        card.classList.add('just-done');
+        setTimeout(() => card.classList.remove('just-done'), 1500);
+      } else {
+        delete data[key][`${id}_time`];
+      }
+
+      saveData(data);
+      renderCards();
+      renderStreak();
+      renderWeekGrid();
+    }
+
+    /* ── Midnight refresh ── */
+    function scheduleMidnight() {
+      const now = new Date();
+      const ms = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1) - now;
+      setTimeout(() => {
+        renderDate(); renderCards(); renderStreak(); renderWeekGrid();
+        scheduleMidnight();
+      }, ms);
+    }
+
+    /* ── Init ── */
+    buildSections();
+    renderDate();
+    renderCards();
+    renderStreak();
+    renderWeekGrid();
+    scheduleMidnight();
+  </script>
+</body>
+</html>
