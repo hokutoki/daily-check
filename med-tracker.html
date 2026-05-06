@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#F4F6FB">
+  <meta name="theme-color" content="#1E3A8A">
   <title>服薬チェッカー</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     :root {
-      --bg: #F4F6FB;
+      --bg: #EFF6FF;
       --card: #FFFFFF;
-      --card2: #F0F3F9;
-      --border: rgba(0,0,0,0.07);
-      --text: #1A1D27;
-      --sub: #7B8497;
-      --muted: #D8DCE8;
+      --card2: #E8F2FF;
+      --border: rgba(30,64,175,0.12);
+      --text: #0F1E35;
+      --sub: #6B88A8;
+      --muted: #BFDBFE;
       --radius: 16px;
       --rsm: 10px;
     }
 
-    html, body { height: 100%; background: var(--bg); }
+    html, body { height: 100%; background: linear-gradient(160deg, #DBEAFE 0%, #EFF6FF 50%, #E0EEFF 100%) fixed; }
 
     body {
       font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
@@ -37,24 +37,29 @@
       min-height: 100svh;
       display: flex;
       flex-direction: column;
-      padding-top: env(safe-area-inset-top);
+      padding-top: 0;
       padding-bottom: calc(64px + env(safe-area-inset-bottom));
     }
 
     /* ── Header ── */
-    .header { padding: 20px 20px 0; flex-shrink: 0; }
+    .header {
+      padding: calc(env(safe-area-inset-top) + 20px) 20px 18px; flex-shrink: 0;
+      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 55%, #2563EB 100%);
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 6px 28px rgba(30,58,138,0.28);
+    }
 
     .header-row { display: flex; align-items: center; justify-content: space-between; }
 
-    .header-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .header-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: white; }
 
-    .header-date { font-size: 12px; color: var(--sub); margin-top: 3px; }
+    .header-date { font-size: 12px; color: rgba(255,255,255,0.72); margin-top: 3px; }
 
     .ring-wrap { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
 
     .ring-svg { transform: rotate(-90deg); }
 
-    .ring-bg { fill: none; stroke: var(--muted); stroke-width: 4; }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.25); stroke-width: 4; }
 
     .ring-fill {
       fill: none; stroke: url(#rg); stroke-width: 4; stroke-linecap: round;
@@ -67,8 +72,8 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
     }
 
-    .ring-num { font-size: 13px; font-weight: 700; }
-    .ring-den { font-size: 9px; color: var(--sub); margin-top: 1px; }
+    .ring-num { font-size: 13px; font-weight: 700; color: white; }
+    .ring-den { font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 1px; }
 
 
     /* ── Tabs ── */
@@ -93,7 +98,7 @@
       color: var(--sub); font-size: 10px; font-family: inherit; font-weight: 500;
       cursor: pointer; transition: color 0.2s;
     }
-    .nav-btn.active { color: #7C3AED; }
+    .nav-btn.active { color: #1E40AF; }
     .nav-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Slot cards ── */
@@ -140,7 +145,7 @@
 
     .stat-num {
       font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
-      background: linear-gradient(135deg,#7C3AED,#6366F1);
+      background: linear-gradient(135deg,#1E40AF,#3B82F6);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .stat-label { font-size: 10px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
@@ -158,9 +163,9 @@
       aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center;
       font-size: 11px; font-weight: 600; background: var(--card2); color: var(--sub);
     }
-    .cal-cell.today { outline: 2px solid rgba(124,58,237,0.6); outline-offset: -2px; }
-    .cal-cell.c-full { background: rgba(124,58,237,0.75); color: white; }
-    .cal-cell.c-high { background: rgba(124,58,237,0.42); color: white; }
+    .cal-cell.today { outline: 2px solid rgba(30,64,175,0.6); outline-offset: -2px; }
+    .cal-cell.c-full { background: rgba(30,64,175,0.75); color: white; }
+    .cal-cell.c-high { background: rgba(30,64,175,0.42); color: white; }
     .cal-cell.c-mid  { background: rgba(245,158,11,0.5);  color: white; }
     .cal-cell.c-low  { background: rgba(239,68,68,0.35);  color: white; }
     .cal-cell.c-none { background: transparent; color: transparent; pointer-events: none; }
@@ -168,6 +173,160 @@
     .cal-legend { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--sub); }
     .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* ── Condition selector ── */
+    .condition-section {
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 12px;
+    }
+    .condition-label { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 10px; }
+    .condition-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .cond-btn {
+      border: 2px solid var(--border); border-radius: 12px;
+      background: var(--card2); padding: 10px 4px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; color: var(--sub);
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+      user-select: none; -webkit-user-select: none;
+    }
+    .cond-btn:active { transform: scale(0.95); }
+    .cond-btn .cond-emoji { font-size: 22px; }
+    .cond-btn.selected[data-cond="good"]   { border-color: #10B981; background: rgba(16,185,129,0.1); color: #10B981; }
+    .cond-btn.selected[data-cond="normal"] { border-color: #F59E0B; background: rgba(245,158,11,0.1); color: #B45309; }
+    .cond-btn.selected[data-cond="bad"]    { border-color: #EF4444; background: rgba(239,68,68,0.1);  color: #DC2626; }
+
+    /* ── Doctor tab ── */
+    .doctor-section { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 16px; }
+    .doctor-section-title { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 12px; }
+
+    .cond-timeline { display: flex; flex-direction: column; gap: 6px; }
+    .cond-row { display: flex; align-items: center; gap: 10px; }
+    .cond-row-date { font-size: 11px; color: var(--sub); width: 68px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .cond-pip {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+    }
+    .cond-pip.good   { background: rgba(16,185,129,0.15); }
+    .cond-pip.normal { background: rgba(245,158,11,0.15); }
+    .cond-pip.bad    { background: rgba(239,68,68,0.12); }
+    .cond-pip.none   { background: var(--card2); }
+    .cond-row-med { font-size: 10px; color: var(--sub); }
+
+    .memo-area {
+      width: 100%; min-height: 120px; resize: vertical;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--card2); padding: 12px 14px;
+      font-family: inherit; font-size: 14px; color: var(--text);
+      line-height: 1.6; outline: none;
+      transition: border-color 0.2s;
+    }
+    .memo-area:focus { border-color: #1E40AF; }
+
+    .copy-btn {
+      margin-top: 10px; width: 100%;
+      background: linear-gradient(135deg,#1E40AF,#3B82F6);
+      color: white; border: none; border-radius: 12px;
+      padding: 13px; font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .copy-btn:active { opacity: 0.8; }
+    .copy-toast {
+      text-align: center; font-size: 12px; color: #10B981;
+      margin-top: 8px; height: 18px; font-weight: 600;
+      transition: opacity 0.4s;
+    }
+
+    /* ── Visit badge ── */
+    .visit-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 6px; padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      user-select: none; -webkit-user-select: none;
+      transition: opacity 0.2s;
+    }
+    .visit-badge:active { opacity: 0.7; }
+    .visit-badge.has-date   { background: rgba(255,255,255,0.2); color: white; }
+    .visit-badge.visit-soon { background: rgba(254,215,170,0.3); color: #FEF3C7; }
+    .visit-badge.visit-today { background: rgba(167,243,208,0.3); color: #D1FAE5; }
+    .visit-badge.visit-past  { background: rgba(254,202,202,0.3); color: #FEE2E2; }
+    .visit-badge.unset { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); border: 1.5px dashed rgba(255,255,255,0.4); }
+
+    /* ── Summary view ── */
+    .summary-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: linear-gradient(160deg, #DBEAFE 0%, #EFF6FF 50%, #E0EEFF 100%);
+      overflow-y: auto;
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    }
+    .summary-overlay.open { display: block; }
+
+    .summary-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 55%, #2563EB 100%);
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 4px 20px rgba(30,58,138,0.22);
+      margin-bottom: 4px;
+    }
+    .summary-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: white; }
+    .summary-close-btn {
+      border: none; background: rgba(255,255,255,0.2); border-radius: 10px;
+      padding: 8px 14px; font-size: 13px; font-weight: 700;
+      color: white; cursor: pointer; font-family: inherit;
+    }
+
+    .summary-body { padding: 0 16px 32px; }
+
+    .summary-period {
+      font-size: 12px; color: var(--sub); text-align: center;
+      margin-bottom: 16px; font-weight: 600;
+    }
+
+    .summary-big-card {
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border); padding: 20px; margin-bottom: 12px;
+    }
+    .summary-card-title {
+      font-size: 11px; font-weight: 700; color: var(--sub);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+    }
+    .summary-rate-num {
+      font-size: 56px; font-weight: 900; letter-spacing: -2px; line-height: 1;
+      background: linear-gradient(135deg,#1E40AF,#3B82F6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .summary-rate-sub { font-size: 12px; color: var(--sub); margin-top: 4px; }
+
+    .summary-cond-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-cond-row:last-child { border-bottom: none; }
+    .summary-cond-emoji { font-size: 20px; width: 28px; text-align: center; }
+    .summary-cond-name { font-size: 14px; font-weight: 600; flex: 1; }
+    .summary-cond-days { font-size: 14px; font-weight: 700; color: var(--text); }
+    .summary-cond-bar-wrap { flex: 1; height: 6px; background: var(--card2); border-radius: 3px; overflow: hidden; }
+    .summary-cond-bar { height: 100%; border-radius: 3px; }
+
+    .summary-memo-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .summary-memo-item:last-child { border-bottom: none; }
+    .summary-memo-date { font-size: 11px; color: var(--sub); font-weight: 700; margin-bottom: 3px; }
+    .summary-memo-text { font-size: 14px; line-height: 1.5; }
+
+    .summary-doctor-note {
+      font-size: 15px; line-height: 1.7; white-space: pre-wrap; color: var(--text);
+    }
+    .summary-empty { font-size: 13px; color: var(--sub); text-align: center; padding: 16px 0; }
+
+    /* ── Present button ── */
+    .present-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg,#1E40AF,#3B82F6);
+      color: white; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: opacity 0.2s; margin-bottom: 16px;
+    }
+    .present-btn:active { opacity: 0.8; }
   </style>
 </head>
 <body>
@@ -179,13 +338,15 @@
       <div>
         <div class="header-title">服薬チェッカー</div>
         <div class="header-date" id="hd-date"></div>
+        <div class="visit-badge unset" id="visit-badge" onclick="openVisitPicker()">📅 受診日を設定</div>
+        <input type="date" id="visit-date-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="saveNextVisit(this.value)">
       </div>
       <div class="ring-wrap">
         <svg class="ring-svg" width="52" height="52" viewBox="0 0 52 52">
           <defs>
             <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#7C3AED"/>
-              <stop offset="100%" stop-color="#6366F1"/>
+              <stop offset="0%" stop-color="white"/>
+              <stop offset="100%" stop-color="rgba(147,197,253,0.9)"/>
             </linearGradient>
           </defs>
           <circle class="ring-bg" cx="26" cy="26" r="20"/>
@@ -202,6 +363,16 @@
   <!-- Today Tab -->
   <div class="tab active" id="tab-today">
     <div id="slots-container"></div>
+    <!-- Condition selector -->
+    <div class="condition-section">
+      <div class="condition-label">今日の体調</div>
+      <div class="condition-btns">
+        <button class="cond-btn" data-cond="good"   onclick="setCondition('good')">  <span class="cond-emoji">😊</span>良い</button>
+        <button class="cond-btn" data-cond="normal" onclick="setCondition('normal')"><span class="cond-emoji">😐</span>普通</button>
+        <button class="cond-btn" data-cond="bad"    onclick="setCondition('bad')">   <span class="cond-emoji">😔</span>悪い</button>
+      </div>
+      <textarea class="memo-area" id="today-memo" placeholder="今日の気になること、症状のメモ…" oninput="saveTodayMemo()" style="margin-top:12px;min-height:80px;"></textarea>
+    </div>
     <div style="height:8px"></div>
   </div>
 
@@ -213,13 +384,57 @@
       <div class="cal-dow" id="cal-dow"></div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(124,58,237,0.75)"></div>全部完了</div>
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(124,58,237,0.42)"></div>半分以上</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(30,64,175,0.75)"></div>全部完了</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(30,64,175,0.42)"></div>半分以上</div>
         <div class="legend-item"><div class="legend-dot" style="background:rgba(245,158,11,0.5)"></div>一部</div>
         <div class="legend-item"><div class="legend-dot" style="background:rgba(239,68,68,0.35)"></div>未服薬</div>
       </div>
     </div>
     <div style="height:20px"></div>
+  </div>
+
+  <!-- Doctor Tab -->
+  <div class="tab" id="tab-doctor">
+    <button class="present-btn" onclick="openSummary()">🩺　受診サマリーを表示（先生に見せる）</button>
+    <div class="doctor-section">
+      <div class="doctor-section-title">過去28日間の体調と服薬</div>
+      <div class="cond-timeline" id="cond-timeline"></div>
+    </div>
+    <div class="doctor-section">
+      <div class="doctor-section-title">先生へのメモ</div>
+      <textarea class="memo-area" id="doctor-memo" placeholder="気になった症状、聞きたいこと、副作用など…" oninput="saveMemo()"></textarea>
+      <button class="copy-btn" onclick="copyMemo()">📋　メモをコピー</button>
+      <div class="copy-toast" id="copy-toast"></div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- Summary Overlay -->
+  <div class="summary-overlay" id="summary-overlay">
+    <div class="summary-header">
+      <div class="summary-title">受診サマリー</div>
+      <button class="summary-close-btn" onclick="closeSummary()">✕ 閉じる</button>
+    </div>
+    <div class="summary-body">
+      <div class="summary-period" id="sum-period"></div>
+      <div class="summary-big-card">
+        <div class="summary-card-title">服薬率（28日間）</div>
+        <div class="summary-rate-num" id="sum-rate">--%</div>
+        <div class="summary-rate-sub" id="sum-rate-sub"></div>
+      </div>
+      <div class="summary-big-card">
+        <div class="summary-card-title">体調</div>
+        <div id="sum-cond"></div>
+      </div>
+      <div class="summary-big-card" id="sum-memos-card">
+        <div class="summary-card-title">日々のメモ</div>
+        <div id="sum-memos"></div>
+      </div>
+      <div class="summary-big-card" id="sum-note-card">
+        <div class="summary-card-title">先生へのメモ</div>
+        <div class="summary-doctor-note" id="sum-note"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Bottom Nav -->
@@ -232,6 +447,10 @@
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       履歴
     </button>
+    <button class="nav-btn" id="nav-doctor" onclick="switchTab('doctor')">
+      <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      受診
+    </button>
   </nav>
 </div>
 
@@ -239,12 +458,12 @@
 const KEY = 'med-tracker-v2';
 
 const SLOTS = [
-  { id:'wake',      name:'起床直後',  emoji:'🌅', timing:'目覚めたらすぐ',  color:'#8B5CF6', due:9  },
+  { id:'wake',      name:'起床直後',  emoji:'🌅', timing:'目覚めたらすぐ',  color:'#60A5FA', due:9  },
   { id:'breakfast', name:'朝食後',    emoji:'☀️', timing:'朝食のあと',      color:'#F59E0B', due:11 },
   { id:'lunch',     name:'昼食後',    emoji:'🌤', timing:'昼食のあと',      color:'#3B82F6', due:14 },
   { id:'pain',      name:'痛み止め',  emoji:'💊', timing:'午後',            color:'#EF4444', due:null },
   { id:'dinner',    name:'夕食後',    emoji:'🌆', timing:'夕食のあと',      color:'#10B981', due:21 },
-  { id:'bed',       name:'就寝前',    emoji:'🌙', timing:'寝る前',          color:'#6366F1', due:null },
+  { id:'bed',       name:'就寝前',    emoji:'🌙', timing:'寝る前',          color:'#3B82F6', due:null },
 ];
 
 /* State */
@@ -273,6 +492,7 @@ function switchTab(tab) {
   document.getElementById(`nav-${tab}`).classList.add('active');
   if (tab === 'today')   renderToday();
   if (tab === 'history') renderHistory();
+  if (tab === 'doctor')  renderDoctor();
 }
 
 /* Header */
@@ -293,6 +513,44 @@ function renderHeader() {
   const C = 125.66;
   document.getElementById('ring-fill').style.strokeDashoffset = C * (1 - done / total);
 
+  // Visit countdown
+  const badge = document.getElementById('visit-badge');
+  const nv = state.nextVisit;
+  if (nv) {
+    const visitDate = new Date(nv + 'T00:00:00');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.round((visitDate - today) / 86400000);
+    if (diff > 7) {
+      badge.textContent = `📅 次の受診まで ${diff}日`;
+      badge.className = 'visit-badge has-date';
+    } else if (diff > 0) {
+      badge.textContent = `⚡ 次の受診まで ${diff}日`;
+      badge.className = 'visit-badge visit-soon';
+    } else if (diff === 0) {
+      badge.textContent = `🏥 今日は受診日`;
+      badge.className = 'visit-badge visit-today';
+    } else {
+      badge.textContent = `📅 受診日を更新する`;
+      badge.className = 'visit-badge visit-past';
+    }
+  } else {
+    badge.textContent = `📅 受診日を設定`;
+    badge.className = 'visit-badge unset';
+  }
+}
+
+function openVisitPicker() {
+  const input = document.getElementById('visit-date-input');
+  const state = load();
+  if (state.nextVisit) input.value = state.nextVisit;
+  input.showPicker ? input.showPicker() : input.click();
+}
+
+function saveNextVisit(val) {
+  const state = load();
+  state.nextVisit = val;
+  save(state);
+  renderHeader();
 }
 
 /* Today */
@@ -305,6 +563,12 @@ function renderToday() {
 
   const container = document.getElementById('slots-container');
   container.innerHTML = '';
+
+  renderConditionBtns(rec._condition || null);
+  setTimeout(() => {
+    const el = document.getElementById('today-memo');
+    if (el) el.value = rec._memo || '';
+  }, 0);
 
   SLOTS.forEach(sl => {
     const isDone = !!rec[sl.id]?.done;
@@ -332,6 +596,21 @@ function renderToday() {
       </div>`;
 
     container.appendChild(card);
+  });
+}
+
+/* Condition */
+function setCondition(cond) {
+  const state = load();
+  const rec = getRec(state);
+  rec._condition = (rec._condition === cond) ? null : cond;
+  save(state);
+  renderConditionBtns(rec._condition);
+}
+
+function renderConditionBtns(cond) {
+  document.querySelectorAll('.cond-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.cond === cond);
   });
 }
 
@@ -418,6 +697,187 @@ function renderHistory() {
     grid.appendChild(cell);
     cur.setDate(cur.getDate() + 1);
   }
+}
+
+/* Doctor */
+const COND_MAP = { good: { emoji:'😊', label:'良い' }, normal: { emoji:'😐', label:'普通' }, bad: { emoji:'😔', label:'悪い' } };
+
+function renderDoctor() {
+  const state = load();
+  const now = new Date();
+  const total = SLOTS.length;
+  const timeline = document.getElementById('cond-timeline');
+  timeline.innerHTML = '';
+  const days = ['日','月','火','水','木','金','土'];
+
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const k = dk(d);
+    const entry = state.records[k] || {};
+    const cond = entry._condition || null;
+    const doneCount = SLOTS.filter(sl => entry[sl.id]?.done).length;
+    const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+
+    const row = document.createElement('div');
+    row.className = 'cond-row';
+
+    const pip = document.createElement('div');
+    pip.className = `cond-pip ${cond || 'none'}`;
+    pip.textContent = cond ? COND_MAP[cond].emoji : '・';
+
+    const dateEl = document.createElement('div');
+    dateEl.className = 'cond-row-date';
+    dateEl.textContent = label;
+
+    const medEl = document.createElement('div');
+    medEl.className = 'cond-row-med';
+    medEl.textContent = doneCount > 0 ? `服薬 ${doneCount}/${total}` : '記録なし';
+
+    if (cond) {
+      const condLabel = document.createElement('div');
+      condLabel.style.cssText = 'font-size:11px;font-weight:600;margin-left:4px;';
+      condLabel.textContent = COND_MAP[cond].label;
+      row.append(dateEl, pip, medEl, condLabel);
+    } else {
+      row.append(dateEl, pip, medEl);
+    }
+    timeline.appendChild(row);
+  }
+
+  // Memo
+  document.getElementById('doctor-memo').value = state.doctorMemo || '';
+}
+
+function openSummary() {
+  renderSummary();
+  document.getElementById('summary-overlay').classList.add('open');
+}
+
+function closeSummary() {
+  document.getElementById('summary-overlay').classList.remove('open');
+}
+
+function renderSummary() {
+  const state = load();
+  const now = new Date();
+  const total = SLOTS.length;
+  const days = ['日','月','火','水','木','金','土'];
+
+  // Period
+  const start = new Date(now); start.setDate(start.getDate() - 27);
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+  document.getElementById('sum-period').textContent = `${fmt(start)} 〜 ${fmt(now)}（28日間）`;
+
+  // 服薬率
+  let totalDoses = 0, takenDoses = 0;
+  let condCounts = { good: 0, normal: 0, bad: 0 };
+  const memoEntries = [];
+
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const entry = state.records[dk(d)] || {};
+    const taken = SLOTS.filter(sl => entry[sl.id]?.done).length;
+    totalDoses += total;
+    takenDoses += taken;
+    if (entry._condition) condCounts[entry._condition]++;
+    if (entry._memo?.trim()) {
+      memoEntries.push({ date: fmt(d), text: entry._memo.trim() });
+    }
+  }
+
+  const rate = totalDoses > 0 ? Math.round(takenDoses / totalDoses * 100) : 0;
+  document.getElementById('sum-rate').textContent = `${rate}%`;
+  document.getElementById('sum-rate-sub').textContent = `${takenDoses} / ${totalDoses} 回`;
+
+  // 体調
+  const condTotal = condCounts.good + condCounts.normal + condCounts.bad;
+  const condEl = document.getElementById('sum-cond');
+  if (condTotal === 0) {
+    condEl.innerHTML = '<div class="summary-empty">記録なし</div>';
+  } else {
+    const condDefs = [
+      { key:'good',   emoji:'😊', label:'良い',  color:'#10B981' },
+      { key:'normal', emoji:'😐', label:'普通',  color:'#F59E0B' },
+      { key:'bad',    emoji:'😔', label:'悪い',  color:'#EF4444' },
+    ];
+    condEl.innerHTML = condDefs.map(c => {
+      const pct = condTotal > 0 ? Math.round(condCounts[c.key] / condTotal * 100) : 0;
+      return `<div class="summary-cond-row">
+        <div class="summary-cond-emoji">${c.emoji}</div>
+        <div class="summary-cond-name">${c.label}</div>
+        <div class="summary-cond-bar-wrap"><div class="summary-cond-bar" style="width:${pct}%;background:${c.color}"></div></div>
+        <div class="summary-cond-days">${condCounts[c.key]}日</div>
+      </div>`;
+    }).join('');
+  }
+
+  // メモ
+  const memosEl = document.getElementById('sum-memos');
+  const memosCard = document.getElementById('sum-memos-card');
+  if (memoEntries.length === 0) {
+    memosCard.style.display = 'none';
+  } else {
+    memosCard.style.display = 'block';
+    memosEl.innerHTML = memoEntries.map(m =>
+      `<div class="summary-memo-item">
+        <div class="summary-memo-date">${m.date}</div>
+        <div class="summary-memo-text">${m.text}</div>
+      </div>`
+    ).join('');
+  }
+
+  // 先生へのメモ
+  const note = state.doctorMemo?.trim() || '';
+  const noteCard = document.getElementById('sum-note-card');
+  if (!note) {
+    noteCard.style.display = 'none';
+  } else {
+    noteCard.style.display = 'block';
+    document.getElementById('sum-note').textContent = note;
+  }
+}
+
+function saveTodayMemo() {
+  const state = load();
+  const rec = getRec(state);
+  rec._memo = document.getElementById('today-memo').value;
+  save(state);
+}
+
+function saveMemo() {
+  const state = load();
+  state.doctorMemo = document.getElementById('doctor-memo').value;
+  save(state);
+}
+
+function copyMemo() {
+  const state = load();
+  const now = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+
+  let text = `【受診メモ】${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}(${days[now.getDay()]})\n\n`;
+
+  // 体調サマリー
+  text += '■ 過去28日間の体調\n';
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const entry = state.records[dk(d)] || {};
+    const cond = entry._condition;
+    if (cond) {
+      text += `  ${d.getMonth()+1}/${d.getDate()} ${COND_MAP[cond].emoji} ${COND_MAP[cond].label}\n`;
+    }
+  }
+
+  if (state.doctorMemo) {
+    text += `\n■ メモ\n${state.doctorMemo}\n`;
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('copy-toast');
+    toast.textContent = 'コピーしました！';
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => { toast.textContent = ''; }, 400); }, 2000);
+  });
 }
 
 /* Init */
