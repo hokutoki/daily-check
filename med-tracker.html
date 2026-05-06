@@ -70,13 +70,6 @@
     .ring-num { font-size: 13px; font-weight: 700; }
     .ring-den { font-size: 9px; color: var(--sub); margin-top: 1px; }
 
-    .overdue-banner {
-      margin: 12px 0 0; padding: 10px 14px;
-      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.22);
-      border-radius: var(--rsm); display: none; align-items: center; gap: 8px;
-    }
-    .overdue-banner.show { display: flex; }
-    .overdue-banner-text { font-size: 13px; font-weight: 600; color: #C0392B; }
 
     /* ── Tabs ── */
     .tab { display: none; flex: 1; overflow-y: auto; padding: 16px 16px 0; -webkit-overflow-scrolling: touch; }
@@ -204,10 +197,6 @@
         </div>
       </div>
     </div>
-    <div class="overdue-banner" id="ob">
-      <span>⚠️</span>
-      <span class="overdue-banner-text" id="ob-text"></span>
-    </div>
   </div>
 
   <!-- Today Tab -->
@@ -304,19 +293,6 @@ function renderHeader() {
   const C = 125.66;
   document.getElementById('ring-fill').style.strokeDashoffset = C * (1 - done / total);
 
-  // Overdue check
-  const hr = now.getHours() + now.getMinutes() / 60;
-  const overdueNames = SLOTS
-    .filter(sl => sl.due && hr >= sl.due && !rec[sl.id]?.done)
-    .map(sl => sl.name);
-
-  const ob = document.getElementById('ob');
-  if (overdueNames.length > 0) {
-    document.getElementById('ob-text').textContent = `${overdueNames.join('・')}の薬が未服薬です`;
-    ob.classList.add('show');
-  } else {
-    ob.classList.remove('show');
-  }
 }
 
 /* Today */
