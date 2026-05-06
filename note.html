@@ -20,214 +20,155 @@
       --text: #1A1D2B;
       --sub: #717585;
       --muted: #C8CCDB;
+      --pin: #F59E0B;
+      --star: #EAB308;
       --radius: 12px;
     }
 
     html, body { height: 100%; background: var(--sidebar); }
+    body { font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif; color: var(--text); min-height: 100svh; overscroll-behavior: none; }
 
-    body {
-      font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
-      color: var(--text);
-      min-height: 100svh;
-      overscroll-behavior: none;
-    }
-
-    .app {
-      display: flex;
-      height: 100svh;
-      padding-top: env(safe-area-inset-top);
-    }
+    .app { display: flex; height: 100svh; padding-top: env(safe-area-inset-top); }
 
     /* ═══ SIDEBAR ═══ */
-    .sidebar {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      background: var(--sidebar);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
+    .sidebar { width: 100%; display: flex; flex-direction: column; background: var(--sidebar); overflow: hidden; flex-shrink: 0; }
 
-    .sidebar-hd {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 16px 10px;
-    }
+    .sidebar-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 14px 10px; }
+    .app-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
 
-    .app-title { font-size: 19px; font-weight: 700; letter-spacing: -0.4px; }
-
-    .new-btn {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--accent); border: none; color: white;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: opacity 0.15s; flex-shrink: 0;
-    }
+    .new-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.15s; }
     .new-btn:active { opacity: 0.7; }
     .new-btn svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; }
 
-    .search-wrap { padding: 0 12px 8px; }
-
-    .search-inp {
-      width: 100%; padding: 8px 12px 8px 32px;
-      background: rgba(255,255,255,0.7); border: 1px solid var(--border);
-      border-radius: 10px; font-size: 14px; font-family: inherit;
-      color: var(--text); outline: none; -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23717585' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: 10px center;
-    }
+    .search-wrap { padding: 0 10px 6px; }
+    .search-inp { width: 100%; padding: 8px 12px 8px 32px; background: rgba(255,255,255,0.75); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--text); outline: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23717585' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 10px center; }
     .search-inp::placeholder { color: var(--muted); }
     .search-inp:focus { border-color: var(--accent); background: white; }
 
-    .tag-filter-row { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 12px 8px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 12px 8px; }
+    .sort-sel { font-size: 12px; font-family: inherit; color: var(--sub); background: none; border: none; outline: none; cursor: pointer; -webkit-appearance: none; }
+    .note-count { font-size: 11px; color: var(--muted); font-weight: 600; }
 
-    .tag-f-chip {
-      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-      cursor: pointer; border: 1.5px solid transparent; user-select: none; -webkit-user-select: none;
-      transition: all 0.15s;
-    }
+    .tag-filter-row { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 10px 8px; }
+    .tag-f-chip { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; user-select: none; -webkit-user-select: none; transition: all 0.15s; }
 
     .note-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 8px 8px; }
 
-    .note-item {
-      background: var(--card); border-radius: var(--radius);
-      padding: 12px 14px; margin-bottom: 6px; cursor: pointer;
-      border: 1.5px solid transparent; transition: border-color 0.15s;
-      user-select: none; -webkit-user-select: none;
-    }
+    .section-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 6px 4px; }
+
+    .note-item { background: var(--card); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 5px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; user-select: none; -webkit-user-select: none; }
     .note-item:active { opacity: 0.85; }
     .note-item.active { border-color: var(--accent); }
+    .note-item.pinned { border-left: 3px solid var(--pin); }
 
-    .ni-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ni-hd { display: flex; align-items: flex-start; gap: 6px; }
+    .ni-title { flex: 1; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ni-badges { display: flex; gap: 2px; flex-shrink: 0; }
+    .ni-badge { font-size: 12px; }
+
     .ni-preview { font-size: 12px; color: var(--sub); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ni-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 7px; }
-    .ni-tags { display: flex; gap: 4px; flex: 1; overflow: hidden; }
+    .ni-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .ni-tags { display: flex; gap: 3px; flex: 1; overflow: hidden; }
     .ni-date { font-size: 10px; color: var(--sub); white-space: nowrap; margin-left: 6px; }
 
-    .tag-sm { padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
-
-    .empty-list { text-align: center; padding: 40px 16px; color: var(--sub); font-size: 13px; line-height: 1.9; }
+    .tag-sm { padding: 2px 6px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+    .empty-list { text-align: center; padding: 36px 16px; color: var(--sub); font-size: 13px; line-height: 1.9; }
 
     /* ═══ MAIN PANEL ═══ */
-    .main-panel {
-      display: none;
-      flex: 1; flex-direction: column;
-      background: var(--bg);
-      overflow: hidden;
-    }
+    .main-panel { display: none; flex: 1; flex-direction: column; background: var(--bg); overflow: hidden; }
+    .main-panel.show { display: flex; position: fixed; inset: 0; z-index: 50; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
 
-    .main-panel.show {
-      display: flex;
-      position: fixed; inset: 0; z-index: 50;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    /* ── Empty state ── */
-    .view-empty {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 40px; color: var(--sub);
-    }
+    .view-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; color: var(--sub); }
     .ve-icon { font-size: 52px; margin-bottom: 14px; }
     .ve-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .ve-sub { font-size: 13px; line-height: 1.7; }
 
     /* ── Panel header ── */
-    .panel-hd {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px; border-bottom: 1px solid var(--border);
-      background: var(--card); flex-shrink: 0;
-    }
+    .panel-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--card); flex-shrink: 0; }
 
-    .back-btn {
-      display: flex; align-items: center; gap: 3px;
-      border: none; background: none; color: var(--accent);
-      font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer;
-    }
+    .back-btn { display: flex; align-items: center; gap: 3px; border: none; background: none; color: var(--accent); font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer; }
     .back-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    .hd-actions { display: flex; gap: 6px; }
-
-    .ico-btn {
-      width: 34px; height: 34px; border-radius: 8px; border: none;
-      background: var(--bg); color: var(--sub); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: background 0.15s;
-    }
+    .hd-actions { display: flex; gap: 4px; }
+    .ico-btn { width: 34px; height: 34px; border-radius: 8px; border: none; background: var(--bg); color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; font-size: 16px; }
     .ico-btn:active { background: var(--muted); }
     .ico-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .ico-btn.del { color: #EF4444; }
+    .ico-btn.active-pin { color: var(--pin); }
+    .ico-btn.active-star { color: var(--star); }
+
+    /* Copy feedback */
+    .copy-toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(30,32,44,0.88); color: white; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 500; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 999; white-space: nowrap; }
+    .copy-toast.show { opacity: 1; }
 
     /* ── Detail ── */
     .view-detail { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    .detail-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 24px; }
+    .detail-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 22px 24px 32px; }
 
     .det-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: 10px; }
-
     .det-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-    .det-date { font-size: 12px; color: var(--sub); }
+    .det-date { font-size: 11px; color: var(--sub); }
+    .det-upd { font-size: 11px; color: var(--muted); }
     .det-src { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
     .det-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
-    .det-content { font-size: 15px; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+
+    /* Markdown styles */
+    .md-body { font-size: 15px; line-height: 1.85; color: var(--text); }
+    .md-body h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.4px; margin: 20px 0 10px; }
+    .md-body h2 { font-size: 18px; font-weight: 700; margin: 18px 0 8px; }
+    .md-body h3 { font-size: 16px; font-weight: 700; margin: 14px 0 6px; }
+    .md-body strong { font-weight: 700; }
+    .md-body em { font-style: italic; }
+    .md-body ul, .md-body ol { padding-left: 22px; margin: 8px 0; }
+    .md-body li { margin: 4px 0; }
+    .md-body pre { background: #F0F2F8; border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 10px 0; }
+    .md-body code { font-family: 'SF Mono', 'Menlo', monospace; font-size: 13px; }
+    .md-body pre code { background: none; padding: 0; }
+    .md-body :not(pre) > code { background: #E8EAF4; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .md-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+    .md-body a { color: var(--accent); text-decoration: underline; word-break: break-all; }
+    .md-body p { margin: 6px 0; }
+    .md-body blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--sub); margin: 8px 0; }
+
+    /* Related notes */
+    .related-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .related-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .related-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--card); border-radius: 8px; cursor: pointer; margin-bottom: 6px; border: 1px solid var(--border); transition: border-color 0.15s; }
+    .related-item:active { opacity: 0.8; }
+    .related-item-title { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .related-item-date { font-size: 10px; color: var(--sub); flex-shrink: 0; }
 
     /* ── Editor ── */
     .view-editor { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    .editor-hd {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px; border-bottom: 1px solid var(--border);
-      background: var(--card); flex-shrink: 0;
-    }
-
+    .editor-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--card); flex-shrink: 0; }
     .cancel-btn { border: none; background: none; color: var(--sub); font-size: 15px; font-family: inherit; cursor: pointer; }
     .cancel-btn:active { opacity: 0.7; }
-
-    .save-btn {
-      border: none; background: var(--accent); color: white;
-      font-size: 14px; font-weight: 700; font-family: inherit;
-      padding: 7px 18px; border-radius: 8px; cursor: pointer; transition: opacity 0.15s;
-    }
+    .save-btn { border: none; background: var(--accent); color: white; font-size: 14px; font-weight: 700; font-family: inherit; padding: 7px 18px; border-radius: 8px; cursor: pointer; transition: opacity 0.15s; }
     .save-btn:active { opacity: 0.75; }
     .save-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    .editor-scroll {
-      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 20px; display: flex; flex-direction: column; gap: 14px;
-    }
+    .editor-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
 
     .field-label { font-size: 10px; color: var(--sub); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
-
-    .inp-title {
-      width: 100%; background: none; border: none;
-      font-size: 20px; font-weight: 700; font-family: inherit;
-      color: var(--text); outline: none; letter-spacing: -0.4px;
-    }
+    .inp-title { width: 100%; background: none; border: none; font-size: 20px; font-weight: 700; font-family: inherit; color: var(--text); outline: none; letter-spacing: -0.4px; }
     .inp-title::placeholder { color: var(--muted); }
-
     .e-divider { height: 1px; background: var(--border); }
-
     .source-row { display: flex; gap: 6px; flex-wrap: wrap; }
-    .src-opt {
-      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
-      border: 1.5px solid var(--border); background: var(--card);
-      cursor: pointer; color: var(--sub); transition: all 0.15s;
-      user-select: none; -webkit-user-select: none;
-    }
+    .src-opt { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); background: var(--card); cursor: pointer; color: var(--sub); transition: all 0.15s; user-select: none; -webkit-user-select: none; }
     .src-opt.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
-
-    .inp-tags {
-      width: 100%; background: none; border: none;
-      font-size: 13px; font-family: inherit; color: var(--text); outline: none;
-    }
+    .inp-tags { width: 100%; background: none; border: none; font-size: 13px; font-family: inherit; color: var(--text); outline: none; }
     .inp-tags::placeholder { color: var(--muted); }
-
     .tags-preview { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    .inp-content {
-      width: 100%; background: none; border: none; font-size: 15px;
-      font-family: inherit; color: var(--text); outline: none;
-      resize: none; line-height: 1.85; min-height: 180px;
-    }
+    .inp-content { width: 100%; background: none; border: none; font-size: 15px; font-family: inherit; color: var(--text); outline: none; resize: none; line-height: 1.85; min-height: 200px; }
     .inp-content::placeholder { color: var(--muted); }
+
+    .editor-footer { display: flex; align-items: center; justify-content: space-between; padding: 8px 20px; border-top: 1px solid var(--border); background: var(--card); flex-shrink: 0; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+    .count-info { font-size: 11px; color: var(--muted); }
+    .md-hint { font-size: 11px; color: var(--muted); }
+
+    /* Toast */
+    .copy-toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(30,32,44,0.9); color: white; padding: 8px 18px; border-radius: 20px; font-size: 13px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 999; }
+    .copy-toast.show { opacity: 1; }
 
     /* ═══ iPad 2カラム ═══ */
     @media (min-width: 680px) {
@@ -250,7 +191,16 @@
       </button>
     </div>
     <div class="search-wrap">
-      <input class="search-inp" id="search-inp" type="search" placeholder="検索..." oninput="onSearch(this.value)">
+      <input class="search-inp" id="search-inp" type="search" placeholder="タイトル・本文・タグを検索..." oninput="onSearch(this.value)">
+    </div>
+    <div class="toolbar">
+      <select class="sort-sel" id="sort-sel" onchange="onSort(this.value)">
+        <option value="new">新しい順</option>
+        <option value="old">古い順</option>
+        <option value="title">タイトル順</option>
+        <option value="star">お気に入り順</option>
+      </select>
+      <div class="note-count" id="note-count"></div>
     </div>
     <div class="tag-filter-row" id="tag-filter-row"></div>
     <div class="note-list" id="note-list"></div>
@@ -273,6 +223,11 @@
           <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>戻る
         </button>
         <div class="hd-actions">
+          <button class="ico-btn" id="pin-btn" onclick="togglePin()" title="ピン留め">📌</button>
+          <button class="ico-btn" id="star-btn" onclick="toggleStar()" title="お気に入り">☆</button>
+          <button class="ico-btn" onclick="copyNote()" title="コピー">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
           <button class="ico-btn" onclick="openEdit()" title="編集">
             <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
@@ -285,7 +240,11 @@
         <div class="det-title" id="det-title"></div>
         <div class="det-meta" id="det-meta"></div>
         <div class="det-tags" id="det-tags"></div>
-        <div class="det-content" id="det-content"></div>
+        <div class="md-body" id="det-content"></div>
+        <div class="related-section" id="related-section" style="display:none">
+          <div class="related-title">🔗 同じタグのノート</div>
+          <div id="related-list"></div>
+        </div>
       </div>
     </div>
 
@@ -313,17 +272,23 @@
         </div>
         <div class="e-divider"></div>
         <div>
-          <div class="field-label">内容</div>
+          <div class="field-label">内容　<span style="font-weight:400;text-transform:none;letter-spacing:0"># 見出し・**太字**・- リスト などMarkdown対応</span></div>
           <textarea class="inp-content" id="inp-content" placeholder="調べた内容をここに..." oninput="onContentInput(this)"></textarea>
         </div>
+      </div>
+      <div class="editor-footer">
+        <div class="count-info" id="count-info">0文字 · 0語</div>
+        <div class="md-hint">Markdown対応</div>
       </div>
     </div>
 
   </div>
 </div>
 
+<div class="copy-toast" id="copy-toast">クリップボードにコピーしました</div>
+
 <script>
-const KEY = 'shirabemono-v1';
+const KEY = 'shirabemono-v2';
 
 const SOURCES = [
   { id:'ai',   label:'🤖 AI' },
@@ -351,7 +316,7 @@ function tc(tag) {
 }
 
 /* State */
-let notes = [], searchQ = '', activeTag = null, selectedId = null, editingId = null, selSrc = null;
+let notes = [], searchQ = '', activeTag = null, selectedId = null, editingId = null, selSrc = null, sortMode = 'new';
 
 function loadNotes() {
   try { notes = JSON.parse(localStorage.getItem(KEY)) || []; }
@@ -360,7 +325,7 @@ function loadNotes() {
 function saveNotes() { localStorage.setItem(KEY, JSON.stringify(notes)); }
 function genId() { return 'n' + Date.now() + Math.random().toString(36).slice(2,5); }
 
-/* Date */
+/* Dates */
 function fmtShort(iso) {
   const d = new Date(iso), now = new Date();
   const h = (now - d) / 3.6e6, dd = Math.floor((now - d) / 86400000);
@@ -376,76 +341,185 @@ function fmtFull(iso) {
   return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${wd}） ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-/* Filter */
+/* Markdown renderer */
+function md(raw) {
+  if (!raw) return '';
+  const lines = raw.split('\n');
+  let html = '', inUl = false, inOl = false, inPre = false, preLines = [];
+
+  for (const line of lines) {
+    if (line.startsWith('```')) {
+      if (inPre) {
+        html += `<pre><code>${esc(preLines.join('\n'))}</code></pre>`;
+        preLines = []; inPre = false;
+      } else {
+        if (inUl) { html += '</ul>'; inUl = false; }
+        if (inOl) { html += '</ol>'; inOl = false; }
+        inPre = true;
+      }
+      continue;
+    }
+    if (inPre) { preLines.push(line); continue; }
+
+    if (!/^[-*•] /.test(line) && inUl) { html += '</ul>'; inUl = false; }
+    if (!/^\d+\. /.test(line) && inOl) { html += '</ol>'; inOl = false; }
+
+    if (line.startsWith('### ')) { html += `<h3>${il(line.slice(4))}</h3>`; continue; }
+    if (line.startsWith('## '))  { html += `<h2>${il(line.slice(3))}</h2>`; continue; }
+    if (line.startsWith('# '))   { html += `<h1>${il(line.slice(2))}</h1>`; continue; }
+    if (line.startsWith('> '))   { html += `<blockquote>${il(line.slice(2))}</blockquote>`; continue; }
+    if (line === '---' || line === '***') { html += '<hr>'; continue; }
+
+    if (/^[-*•] /.test(line)) {
+      if (!inUl) { html += '<ul>'; inUl = true; }
+      html += `<li>${il(line.replace(/^[-*•] /,''))}</li>`;
+      continue;
+    }
+    if (/^\d+\. /.test(line)) {
+      if (!inOl) { html += '<ol>'; inOl = true; }
+      html += `<li>${il(line.replace(/^\d+\. /,''))}</li>`;
+      continue;
+    }
+    if (line.trim() === '') { html += '<br>'; continue; }
+    html += `<p>${il(line)}</p>`;
+  }
+  if (inUl) html += '</ul>';
+  if (inOl) html += '</ol>';
+  if (inPre) html += `<pre><code>${esc(preLines.join('\n'))}</code></pre>`;
+  return html;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function il(s) { // inline markdown
+  s = esc(s);
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  s = s.replace(/(https?:\/\/[^\s<&"']+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+
+/* Filter & sort */
 function filtered() {
-  return notes
-    .filter(n => {
-      if (activeTag && !n.tags.includes(activeTag)) return false;
-      if (!searchQ) return true;
-      const q = searchQ.toLowerCase();
-      return (n.title||'').toLowerCase().includes(q) || n.content.toLowerCase().includes(q) || n.tags.some(t=>t.toLowerCase().includes(q));
-    })
-    .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  let list = notes.filter(n => {
+    if (activeTag && !n.tags.includes(activeTag)) return false;
+    if (!searchQ) return true;
+    const q = searchQ.toLowerCase();
+    return (n.title||'').toLowerCase().includes(q) || n.content.toLowerCase().includes(q) || n.tags.some(t => t.toLowerCase().includes(q));
+  });
+
+  const pinned = list.filter(n => n.pinned);
+  const rest = list.filter(n => !n.pinned);
+
+  function sortFn(a, b) {
+    if (sortMode === 'new')   return new Date(b.updatedAt||b.createdAt) - new Date(a.updatedAt||a.createdAt);
+    if (sortMode === 'old')   return new Date(a.createdAt) - new Date(b.createdAt);
+    if (sortMode === 'title') return (a.title||'').localeCompare(b.title||'');
+    if (sortMode === 'star')  return (b.starred?1:0) - (a.starred?1:0);
+    return 0;
+  }
+
+  return [...pinned.sort(sortFn), ...rest.sort(sortFn)];
 }
 
 function allTags() {
-  const s = new Set(); notes.forEach(n => n.tags.forEach(t => s.add(t))); return [...s];
+  const map = {};
+  notes.forEach(n => n.tags.forEach(t => { map[t] = (map[t]||0) + 1; }));
+  return map;
 }
 
 /* Render list */
 function renderList() {
   const list = filtered();
   const el = document.getElementById('note-list');
+  const tagMap = allTags();
+
+  // Count
+  document.getElementById('note-count').textContent = `${list.length}件`;
+
+  // Tag filters
+  const tags = Object.keys(tagMap);
+  document.getElementById('tag-filter-row').innerHTML = tags.map(t => {
+    const c = tc(t), active = activeTag === t;
+    return `<span class="tag-f-chip" style="background:${active?c.bg:'transparent'};color:${c.tx};border-color:${c.bg}" onclick="filterTag('${eAttr(t)}')">${eHtml(t)} ${tagMap[t]}</span>`;
+  }).join('');
 
   if (notes.length === 0) {
     el.innerHTML = `<div class="empty-list">まだノートがありません<br>＋ボタンで最初のノートを作成</div>`;
-  } else if (list.length === 0) {
+    return;
+  }
+  if (list.length === 0) {
     el.innerHTML = `<div class="empty-list">検索結果がありません</div>`;
-  } else {
-    el.innerHTML = list.map(n => {
-      const preview = n.content.replace(/\n/g,' ').slice(0,60);
-      const tagsHtml = n.tags.slice(0,3).map(t => {
-        const c = tc(t);
-        return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${t}</span>`;
-      }).join('');
-      return `
-        <div class="note-item${selectedId===n.id?' active':''}" onclick="selectNote('${n.id}')">
-          <div class="ni-title">${esc(n.title || preview || '無題')}</div>
-          ${n.title ? `<div class="ni-preview">${esc(preview)}</div>` : ''}
-          <div class="ni-footer">
-            <div class="ni-tags">${tagsHtml}</div>
-            <div class="ni-date">${fmtShort(n.createdAt)}</div>
-          </div>
-        </div>`;
-    }).join('');
+    return;
   }
 
-  // Tag filters
-  const tags = allTags();
-  const tf = document.getElementById('tag-filter-row');
-  tf.innerHTML = tags.map(t => {
-    const c = tc(t), active = activeTag === t;
-    return `<span class="tag-f-chip" style="background:${active?c.bg:'transparent'};color:${c.tx};border-color:${c.bg}" onclick="filterTag('${esc(t)}')">${esc(t)}</span>`;
-  }).join('');
+  // Pinned / regular sections
+  const pinnedList = list.filter(n => n.pinned);
+  const regularList = list.filter(n => !n.pinned);
+  let html = '';
+
+  if (pinnedList.length > 0) {
+    html += `<div class="section-label">📌 固定</div>`;
+    html += pinnedList.map(noteItemHtml).join('');
+  }
+  if (regularList.length > 0) {
+    if (pinnedList.length > 0) html += `<div class="section-label" style="margin-top:4px">すべて</div>`;
+    html += regularList.map(noteItemHtml).join('');
+  }
+  el.innerHTML = html;
 }
 
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function noteItemHtml(n) {
+  const preview = n.content.replace(/[#*`\-]/g,'').replace(/\n/g,' ').slice(0,55);
+  const tagsHtml = n.tags.slice(0,3).map(t => {
+    const c = tc(t);
+    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${eHtml(t)}</span>`;
+  }).join('');
+  const badges = (n.pinned ? '📌' : '') + (n.starred ? '⭐' : '');
+  return `
+    <div class="note-item${selectedId===n.id?' active':''}${n.pinned?' pinned':''}" onclick="selectNote('${n.id}')">
+      <div class="ni-hd">
+        <div class="ni-title">${eHtml(n.title||preview||'無題')}</div>
+        ${badges ? `<div class="ni-badges">${badges}</div>` : ''}
+      </div>
+      ${n.title ? `<div class="ni-preview">${eHtml(preview)}</div>` : ''}
+      <div class="ni-footer">
+        <div class="ni-tags">${tagsHtml}</div>
+        <div class="ni-date">${fmtShort(n.updatedAt||n.createdAt)}</div>
+      </div>
+    </div>`;
+}
 
-/* Select */
+function eHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function eAttr(s) { return (s||'').replace(/'/g,"\\'"); }
+
+/* Select note */
 function selectNote(id) {
   selectedId = id;
-  const note = notes.find(n => n.id === id);
-  if (!note) return;
   renderList();
-  renderDetail(note);
+  renderDetail();
   setView('detail');
 }
 
-function renderDetail(note) {
+function renderDetail() {
+  const note = notes.find(n => n.id === selectedId);
+  if (!note) return;
+
   document.getElementById('det-title').textContent = note.title || '無題';
+
+  // Pin/star buttons
+  document.getElementById('pin-btn').textContent = note.pinned ? '📌' : '📍';
+  document.getElementById('pin-btn').classList.toggle('active-pin', !!note.pinned);
+  document.getElementById('star-btn').textContent = note.starred ? '⭐' : '☆';
+  document.getElementById('star-btn').classList.toggle('active-star', !!note.starred);
 
   const src = note.source ? SOURCES.find(s => s.id === note.source) : null;
   let metaHtml = `<span class="det-date">${fmtFull(note.createdAt)}</span>`;
+  if (note.updatedAt && note.updatedAt !== note.createdAt) {
+    metaHtml += `<span class="det-upd">（編集: ${fmtShort(note.updatedAt)}）</span>`;
+  }
   if (src) {
     const c = tc(src.label);
     metaHtml += `<span class="det-src" style="background:${c.bg};color:${c.tx}">${src.label}</span>`;
@@ -453,9 +527,63 @@ function renderDetail(note) {
   document.getElementById('det-meta').innerHTML = metaHtml;
   document.getElementById('det-tags').innerHTML = note.tags.map(t => {
     const c = tc(t);
-    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx};font-size:12px;padding:3px 10px">${esc(t)}</span>`;
+    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx};font-size:12px;padding:3px 10px;cursor:pointer" onclick="filterTag('${eAttr(t)}')">${eHtml(t)}</span>`;
   }).join('');
-  document.getElementById('det-content').textContent = note.content;
+
+  document.getElementById('det-content').innerHTML = md(note.content);
+
+  // Related notes
+  const related = notes.filter(n => n.id !== selectedId && n.tags.some(t => note.tags.includes(t))).slice(0,4);
+  const relSec = document.getElementById('related-section');
+  if (related.length > 0) {
+    document.getElementById('related-list').innerHTML = related.map(r =>
+      `<div class="related-item" onclick="selectNote('${r.id}')">
+        <div class="related-item-title">${eHtml(r.title || r.content.slice(0,30) || '無題')}</div>
+        <div class="related-item-date">${fmtShort(r.updatedAt||r.createdAt)}</div>
+      </div>`
+    ).join('');
+    relSec.style.display = 'block';
+  } else {
+    relSec.style.display = 'none';
+  }
+}
+
+/* Pin / Star */
+function togglePin() {
+  const i = notes.findIndex(n => n.id === selectedId);
+  if (i < 0) return;
+  notes[i].pinned = !notes[i].pinned;
+  saveNotes(); renderList(); renderDetail();
+}
+
+function toggleStar() {
+  const i = notes.findIndex(n => n.id === selectedId);
+  if (i < 0) return;
+  notes[i].starred = !notes[i].starred;
+  saveNotes(); renderList(); renderDetail();
+}
+
+/* Copy */
+function copyNote() {
+  const note = notes.find(n => n.id === selectedId);
+  if (!note) return;
+  const src = note.source ? SOURCES.find(s => s.id === note.source)?.label : '';
+  const text = [
+    note.title,
+    `${fmtFull(note.createdAt)}${src ? ' · ' + src : ''}`,
+    note.tags.length ? `タグ: ${note.tags.join(', ')}` : '',
+    '',
+    note.content
+  ].filter(l => l !== undefined && l !== null).join('\n').trim();
+
+  navigator.clipboard.writeText(text).then(() => showToast('コピーしました'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('copy-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 /* Editor */
@@ -467,10 +595,9 @@ function buildSrcRow() {
 
 function openNew() {
   editingId = null; selSrc = null;
-  document.getElementById('inp-title').value = '';
-  document.getElementById('inp-tags').value = '';
-  document.getElementById('inp-content').value = '';
+  ['inp-title','inp-tags','inp-content'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('tags-preview').innerHTML = '';
+  document.getElementById('count-info').textContent = '0文字 · 0語';
   document.getElementById('save-btn').disabled = true;
   buildSrcRow();
   setView('editor');
@@ -483,16 +610,17 @@ function openEdit() {
   editingId = selectedId; selSrc = note.source || null;
   document.getElementById('inp-title').value = note.title || '';
   document.getElementById('inp-tags').value = note.tags.join(', ');
-  document.getElementById('inp-content').value = note.content;
+  const ta = document.getElementById('inp-content');
+  ta.value = note.content;
+  ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
   document.getElementById('save-btn').disabled = false;
-  buildSrcRow(); onTagInput();
+  buildSrcRow(); onTagInput(); updateCount();
   setView('editor');
 }
 
 function cancelEdit() {
-  if (selectedId) {
-    const note = notes.find(n => n.id === selectedId);
-    if (note) { renderDetail(note); setView('detail'); return; }
+  if (selectedId && notes.find(n => n.id === selectedId)) {
+    renderDetail(); setView('detail'); return;
   }
   selectedId = null; setView('empty'); closePanel();
 }
@@ -503,7 +631,7 @@ function onTagInput() {
   const tags = document.getElementById('inp-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   document.getElementById('tags-preview').innerHTML = tags.map(t => {
     const c = tc(t);
-    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${esc(t)}</span>`;
+    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${eHtml(t)}</span>`;
   }).join('');
 }
 
@@ -511,6 +639,14 @@ function onContentInput(el) {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
   document.getElementById('save-btn').disabled = !el.value.trim();
+  updateCount();
+}
+
+function updateCount() {
+  const val = document.getElementById('inp-content').value;
+  const chars = val.length;
+  const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+  document.getElementById('count-info').textContent = `${chars}文字 · ${words}語`;
 }
 
 function saveNote() {
@@ -519,17 +655,16 @@ function saveNote() {
   const tags = document.getElementById('inp-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   if (!content) return;
 
+  const now = new Date().toISOString();
   if (editingId) {
     const i = notes.findIndex(n => n.id === editingId);
-    if (i >= 0) { notes[i] = { ...notes[i], title, content, tags, source: selSrc }; selectedId = editingId; }
+    if (i >= 0) { notes[i] = { ...notes[i], title, content, tags, source: selSrc, updatedAt: now }; selectedId = editingId; }
   } else {
-    const note = { id: genId(), title, content, tags, source: selSrc, createdAt: new Date().toISOString() };
+    const note = { id: genId(), title, content, tags, source: selSrc, createdAt: now, updatedAt: now, pinned: false, starred: false };
     notes.unshift(note); selectedId = note.id;
   }
 
-  saveNotes(); renderList();
-  renderDetail(notes.find(n => n.id === selectedId));
-  setView('detail');
+  saveNotes(); renderList(); renderDetail(); setView('detail');
 }
 
 function deleteNote() {
@@ -541,18 +676,28 @@ function deleteNote() {
 
 /* View */
 function setView(v) {
-  document.getElementById('view-empty').style.display  = v==='empty'  ? 'flex'  : 'none';
-  document.getElementById('view-detail').style.display = v==='detail' ? 'flex'  : 'none';
-  document.getElementById('view-editor').style.display = v==='editor' ? 'flex'  : 'none';
+  document.getElementById('view-empty').style.display  = v==='empty'  ? 'flex' : 'none';
+  document.getElementById('view-detail').style.display = v==='detail' ? 'flex' : 'none';
+  document.getElementById('view-editor').style.display = v==='editor' ? 'flex' : 'none';
   const panel = document.getElementById('main-panel');
   if (v !== 'empty') panel.classList.add('show'); else panel.classList.remove('show');
 }
 
 function closePanel() { document.getElementById('main-panel').classList.remove('show'); }
 
-/* Search / filter */
+/* Search / filter / sort */
 function onSearch(q) { searchQ = q; renderList(); }
 function filterTag(t) { activeTag = activeTag === t ? null : t; renderList(); }
+function onSort(v) { sortMode = v; renderList(); }
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') { e.preventDefault(); openNew(); }
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('main-panel');
+    if (panel.classList.contains('show') && window.innerWidth < 680) closePanel();
+  }
+});
 
 /* Init */
 loadNotes(); renderList(); setView('empty');
