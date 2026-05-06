@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#ECEEF5">
+  <title>調べ物ノート</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --sidebar: #ECEEF5;
+      --bg: #F5F7FC;
+      --card: #FFFFFF;
+      --border: rgba(0,0,0,0.08);
+      --accent: #4A6CF7;
+      --accent-lt: rgba(74,108,247,0.1);
+      --text: #1A1D2B;
+      --sub: #717585;
+      --muted: #C8CCDB;
+      --radius: 12px;
+    }
+
+    html, body { height: 100%; background: var(--sidebar); }
+
+    body {
+      font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      color: var(--text);
+      min-height: 100svh;
+      overscroll-behavior: none;
+    }
+
+    .app {
+      display: flex;
+      height: 100svh;
+      padding-top: env(safe-area-inset-top);
+    }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      background: var(--sidebar);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 10px;
+    }
+
+    .app-title { font-size: 19px; font-weight: 700; letter-spacing: -0.4px; }
+
+    .new-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); border: none; color: white;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: opacity 0.15s; flex-shrink: 0;
+    }
+    .new-btn:active { opacity: 0.7; }
+    .new-btn svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
+    .search-wrap { padding: 0 12px 8px; }
+
+    .search-inp {
+      width: 100%; padding: 8px 12px 8px 32px;
+      background: rgba(255,255,255,0.7); border: 1px solid var(--border);
+      border-radius: 10px; font-size: 14px; font-family: inherit;
+      color: var(--text); outline: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23717585' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 10px center;
+    }
+    .search-inp::placeholder { color: var(--muted); }
+    .search-inp:focus { border-color: var(--accent); background: white; }
+
+    .tag-filter-row { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 12px 8px; }
+
+    .tag-f-chip {
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid transparent; user-select: none; -webkit-user-select: none;
+      transition: all 0.15s;
+    }
+
+    .note-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 8px 8px; }
+
+    .note-item {
+      background: var(--card); border-radius: var(--radius);
+      padding: 12px 14px; margin-bottom: 6px; cursor: pointer;
+      border: 1.5px solid transparent; transition: border-color 0.15s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .note-item:active { opacity: 0.85; }
+    .note-item.active { border-color: var(--accent); }
+
+    .ni-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ni-preview { font-size: 12px; color: var(--sub); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ni-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 7px; }
+    .ni-tags { display: flex; gap: 4px; flex: 1; overflow: hidden; }
+    .ni-date { font-size: 10px; color: var(--sub); white-space: nowrap; margin-left: 6px; }
+
+    .tag-sm { padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+
+    .empty-list { text-align: center; padding: 40px 16px; color: var(--sub); font-size: 13px; line-height: 1.9; }
+
+    /* ═══ MAIN PANEL ═══ */
+    .main-panel {
+      display: none;
+      flex: 1; flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .main-panel.show {
+      display: flex;
+      position: fixed; inset: 0; z-index: 50;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* ── Empty state ── */
+    .view-empty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 40px; color: var(--sub);
+    }
+    .ve-icon { font-size: 52px; margin-bottom: 14px; }
+    .ve-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .ve-sub { font-size: 13px; line-height: 1.7; }
+
+    /* ── Panel header ── */
+    .panel-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: var(--card); flex-shrink: 0;
+    }
+
+    .back-btn {
+      display: flex; align-items: center; gap: 3px;
+      border: none; background: none; color: var(--accent);
+      font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer;
+    }
+    .back-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .hd-actions { display: flex; gap: 6px; }
+
+    .ico-btn {
+      width: 34px; height: 34px; border-radius: 8px; border: none;
+      background: var(--bg); color: var(--sub); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+    }
+    .ico-btn:active { background: var(--muted); }
+    .ico-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .ico-btn.del { color: #EF4444; }
+
+    /* ── Detail ── */
+    .view-detail { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .detail-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 24px; }
+
+    .det-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: 10px; }
+
+    .det-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .det-date { font-size: 12px; color: var(--sub); }
+    .det-src { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+    .det-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .det-content { font-size: 15px; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+
+    /* ── Editor ── */
+    .view-editor { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .editor-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: var(--card); flex-shrink: 0;
+    }
+
+    .cancel-btn { border: none; background: none; color: var(--sub); font-size: 15px; font-family: inherit; cursor: pointer; }
+    .cancel-btn:active { opacity: 0.7; }
+
+    .save-btn {
+      border: none; background: var(--accent); color: white;
+      font-size: 14px; font-weight: 700; font-family: inherit;
+      padding: 7px 18px; border-radius: 8px; cursor: pointer; transition: opacity 0.15s;
+    }
+    .save-btn:active { opacity: 0.75; }
+    .save-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .editor-scroll {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .field-label { font-size: 10px; color: var(--sub); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+
+    .inp-title {
+      width: 100%; background: none; border: none;
+      font-size: 20px; font-weight: 700; font-family: inherit;
+      color: var(--text); outline: none; letter-spacing: -0.4px;
+    }
+    .inp-title::placeholder { color: var(--muted); }
+
+    .e-divider { height: 1px; background: var(--border); }
+
+    .source-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .src-opt {
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      border: 1.5px solid var(--border); background: var(--card);
+      cursor: pointer; color: var(--sub); transition: all 0.15s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .src-opt.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+    .inp-tags {
+      width: 100%; background: none; border: none;
+      font-size: 13px; font-family: inherit; color: var(--text); outline: none;
+    }
+    .inp-tags::placeholder { color: var(--muted); }
+
+    .tags-preview { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .inp-content {
+      width: 100%; background: none; border: none; font-size: 15px;
+      font-family: inherit; color: var(--text); outline: none;
+      resize: none; line-height: 1.85; min-height: 180px;
+    }
+    .inp-content::placeholder { color: var(--muted); }
+
+    /* ═══ iPad 2カラム ═══ */
+    @media (min-width: 680px) {
+      .sidebar { width: 290px; border-right: 1px solid var(--border); }
+      .main-panel { display: flex; }
+      .main-panel.show { position: relative; z-index: auto; padding: 0; }
+      .back-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="sidebar-hd">
+      <div class="app-title">📝 調べ物ノート</div>
+      <button class="new-btn" onclick="openNew()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="search-wrap">
+      <input class="search-inp" id="search-inp" type="search" placeholder="検索..." oninput="onSearch(this.value)">
+    </div>
+    <div class="tag-filter-row" id="tag-filter-row"></div>
+    <div class="note-list" id="note-list"></div>
+  </div>
+
+  <!-- ── Main panel ── -->
+  <div class="main-panel" id="main-panel">
+
+    <!-- Empty -->
+    <div class="view-empty" id="view-empty">
+      <div class="ve-icon">🔍</div>
+      <div class="ve-title">調べ物ノート</div>
+      <div class="ve-sub">ノートを選ぶか<br>＋ボタンで新規作成</div>
+    </div>
+
+    <!-- Detail -->
+    <div class="view-detail" id="view-detail" style="display:none">
+      <div class="panel-hd">
+        <button class="back-btn" onclick="closePanel()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>戻る
+        </button>
+        <div class="hd-actions">
+          <button class="ico-btn" onclick="openEdit()" title="編集">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="ico-btn del" onclick="deleteNote()" title="削除">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="detail-scroll">
+        <div class="det-title" id="det-title"></div>
+        <div class="det-meta" id="det-meta"></div>
+        <div class="det-tags" id="det-tags"></div>
+        <div class="det-content" id="det-content"></div>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div class="view-editor" id="view-editor" style="display:none">
+      <div class="editor-hd">
+        <button class="cancel-btn" onclick="cancelEdit()">キャンセル</button>
+        <button class="save-btn" id="save-btn" onclick="saveNote()" disabled>保存</button>
+      </div>
+      <div class="editor-scroll">
+        <div>
+          <div class="field-label">タイトル（省略可）</div>
+          <input class="inp-title" id="inp-title" type="text" placeholder="例：ロキソプロフェンの副作用" maxlength="60">
+        </div>
+        <div class="e-divider"></div>
+        <div>
+          <div class="field-label">出典・参照元</div>
+          <div class="source-row" id="source-row"></div>
+        </div>
+        <div class="e-divider"></div>
+        <div>
+          <div class="field-label">タグ（カンマ区切り）</div>
+          <input class="inp-tags" id="inp-tags" type="text" placeholder="例：医療, 薬, 英語" oninput="onTagInput()">
+          <div class="tags-preview" id="tags-preview" style="margin-top:8px"></div>
+        </div>
+        <div class="e-divider"></div>
+        <div>
+          <div class="field-label">内容</div>
+          <textarea class="inp-content" id="inp-content" placeholder="調べた内容をここに..." oninput="onContentInput(this)"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const KEY = 'shirabemono-v1';
+
+const SOURCES = [
+  { id:'ai',   label:'🤖 AI' },
+  { id:'dic',  label:'📖 辞書' },
+  { id:'web',  label:'🌐 Web' },
+  { id:'book', label:'📚 書籍' },
+  { id:'memo', label:'✏️ メモ' },
+];
+
+const TCOLORS = [
+  { bg:'#EDE9FE', tx:'#6D28D9' },
+  { bg:'#DBEAFE', tx:'#1D4ED8' },
+  { bg:'#D1FAE5', tx:'#065F46' },
+  { bg:'#FEF3C7', tx:'#92400E' },
+  { bg:'#FCE7F3', tx:'#9D174D' },
+  { bg:'#E0F2FE', tx:'#0369A1' },
+  { bg:'#FEE2E2', tx:'#991B1B' },
+  { bg:'#F3F4F6', tx:'#374151' },
+];
+
+function tc(tag) {
+  let h = 0;
+  for (const c of tag) h = (h * 31 + c.charCodeAt(0)) & 0xFFFF;
+  return TCOLORS[h % TCOLORS.length];
+}
+
+/* State */
+let notes = [], searchQ = '', activeTag = null, selectedId = null, editingId = null, selSrc = null;
+
+function loadNotes() {
+  try { notes = JSON.parse(localStorage.getItem(KEY)) || []; }
+  catch { notes = []; }
+}
+function saveNotes() { localStorage.setItem(KEY, JSON.stringify(notes)); }
+function genId() { return 'n' + Date.now() + Math.random().toString(36).slice(2,5); }
+
+/* Date */
+function fmtShort(iso) {
+  const d = new Date(iso), now = new Date();
+  const h = (now - d) / 3.6e6, dd = Math.floor((now - d) / 86400000);
+  if (h < 1) return 'たった今';
+  if (h < 24) return `${Math.floor(h)}時間前`;
+  if (dd === 1) return '昨日';
+  if (dd < 7) return `${dd}日前`;
+  return `${d.getMonth()+1}月${d.getDate()}日`;
+}
+function fmtFull(iso) {
+  const d = new Date(iso);
+  const wd = ['日','月','火','水','木','金','土'][d.getDay()];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${wd}） ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+/* Filter */
+function filtered() {
+  return notes
+    .filter(n => {
+      if (activeTag && !n.tags.includes(activeTag)) return false;
+      if (!searchQ) return true;
+      const q = searchQ.toLowerCase();
+      return (n.title||'').toLowerCase().includes(q) || n.content.toLowerCase().includes(q) || n.tags.some(t=>t.toLowerCase().includes(q));
+    })
+    .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function allTags() {
+  const s = new Set(); notes.forEach(n => n.tags.forEach(t => s.add(t))); return [...s];
+}
+
+/* Render list */
+function renderList() {
+  const list = filtered();
+  const el = document.getElementById('note-list');
+
+  if (notes.length === 0) {
+    el.innerHTML = `<div class="empty-list">まだノートがありません<br>＋ボタンで最初のノートを作成</div>`;
+  } else if (list.length === 0) {
+    el.innerHTML = `<div class="empty-list">検索結果がありません</div>`;
+  } else {
+    el.innerHTML = list.map(n => {
+      const preview = n.content.replace(/\n/g,' ').slice(0,60);
+      const tagsHtml = n.tags.slice(0,3).map(t => {
+        const c = tc(t);
+        return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${t}</span>`;
+      }).join('');
+      return `
+        <div class="note-item${selectedId===n.id?' active':''}" onclick="selectNote('${n.id}')">
+          <div class="ni-title">${esc(n.title || preview || '無題')}</div>
+          ${n.title ? `<div class="ni-preview">${esc(preview)}</div>` : ''}
+          <div class="ni-footer">
+            <div class="ni-tags">${tagsHtml}</div>
+            <div class="ni-date">${fmtShort(n.createdAt)}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // Tag filters
+  const tags = allTags();
+  const tf = document.getElementById('tag-filter-row');
+  tf.innerHTML = tags.map(t => {
+    const c = tc(t), active = activeTag === t;
+    return `<span class="tag-f-chip" style="background:${active?c.bg:'transparent'};color:${c.tx};border-color:${c.bg}" onclick="filterTag('${esc(t)}')">${esc(t)}</span>`;
+  }).join('');
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* Select */
+function selectNote(id) {
+  selectedId = id;
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  renderList();
+  renderDetail(note);
+  setView('detail');
+}
+
+function renderDetail(note) {
+  document.getElementById('det-title').textContent = note.title || '無題';
+
+  const src = note.source ? SOURCES.find(s => s.id === note.source) : null;
+  let metaHtml = `<span class="det-date">${fmtFull(note.createdAt)}</span>`;
+  if (src) {
+    const c = tc(src.label);
+    metaHtml += `<span class="det-src" style="background:${c.bg};color:${c.tx}">${src.label}</span>`;
+  }
+  document.getElementById('det-meta').innerHTML = metaHtml;
+  document.getElementById('det-tags').innerHTML = note.tags.map(t => {
+    const c = tc(t);
+    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx};font-size:12px;padding:3px 10px">${esc(t)}</span>`;
+  }).join('');
+  document.getElementById('det-content').textContent = note.content;
+}
+
+/* Editor */
+function buildSrcRow() {
+  document.getElementById('source-row').innerHTML = SOURCES.map(s =>
+    `<div class="src-opt${selSrc===s.id?' sel':''}" onclick="pickSrc('${s.id}')">${s.label}</div>`
+  ).join('');
+}
+
+function openNew() {
+  editingId = null; selSrc = null;
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-tags').value = '';
+  document.getElementById('inp-content').value = '';
+  document.getElementById('tags-preview').innerHTML = '';
+  document.getElementById('save-btn').disabled = true;
+  buildSrcRow();
+  setView('editor');
+  setTimeout(() => document.getElementById('inp-content').focus(), 300);
+}
+
+function openEdit() {
+  const note = notes.find(n => n.id === selectedId);
+  if (!note) return;
+  editingId = selectedId; selSrc = note.source || null;
+  document.getElementById('inp-title').value = note.title || '';
+  document.getElementById('inp-tags').value = note.tags.join(', ');
+  document.getElementById('inp-content').value = note.content;
+  document.getElementById('save-btn').disabled = false;
+  buildSrcRow(); onTagInput();
+  setView('editor');
+}
+
+function cancelEdit() {
+  if (selectedId) {
+    const note = notes.find(n => n.id === selectedId);
+    if (note) { renderDetail(note); setView('detail'); return; }
+  }
+  selectedId = null; setView('empty'); closePanel();
+}
+
+function pickSrc(id) { selSrc = selSrc === id ? null : id; buildSrcRow(); }
+
+function onTagInput() {
+  const tags = document.getElementById('inp-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  document.getElementById('tags-preview').innerHTML = tags.map(t => {
+    const c = tc(t);
+    return `<span class="tag-sm" style="background:${c.bg};color:${c.tx}">${esc(t)}</span>`;
+  }).join('');
+}
+
+function onContentInput(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+  document.getElementById('save-btn').disabled = !el.value.trim();
+}
+
+function saveNote() {
+  const title = document.getElementById('inp-title').value.trim();
+  const content = document.getElementById('inp-content').value.trim();
+  const tags = document.getElementById('inp-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if (!content) return;
+
+  if (editingId) {
+    const i = notes.findIndex(n => n.id === editingId);
+    if (i >= 0) { notes[i] = { ...notes[i], title, content, tags, source: selSrc }; selectedId = editingId; }
+  } else {
+    const note = { id: genId(), title, content, tags, source: selSrc, createdAt: new Date().toISOString() };
+    notes.unshift(note); selectedId = note.id;
+  }
+
+  saveNotes(); renderList();
+  renderDetail(notes.find(n => n.id === selectedId));
+  setView('detail');
+}
+
+function deleteNote() {
+  if (!confirm('このノートを削除しますか？')) return;
+  notes = notes.filter(n => n.id !== selectedId);
+  selectedId = null; saveNotes(); renderList();
+  setView('empty'); closePanel();
+}
+
+/* View */
+function setView(v) {
+  document.getElementById('view-empty').style.display  = v==='empty'  ? 'flex'  : 'none';
+  document.getElementById('view-detail').style.display = v==='detail' ? 'flex'  : 'none';
+  document.getElementById('view-editor').style.display = v==='editor' ? 'flex'  : 'none';
+  const panel = document.getElementById('main-panel');
+  if (v !== 'empty') panel.classList.add('show'); else panel.classList.remove('show');
+}
+
+function closePanel() { document.getElementById('main-panel').classList.remove('show'); }
+
+/* Search / filter */
+function onSearch(q) { searchQ = q; renderList(); }
+function filterTag(t) { activeTag = activeTag === t ? null : t; renderList(); }
+
+/* Init */
+loadNotes(); renderList(); setView('empty');
+</script>
+</body>
+</html>
