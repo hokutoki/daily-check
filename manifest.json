@@ -1,0 +1,16 @@
+{
+  "name": "服薬チェッカー",
+  "short_name": "服薬",
+  "start_url": "./med-tracker.html",
+  "display": "standalone",
+  "background_color": "#1E3A8A",
+  "theme_color": "#1E3A8A",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
