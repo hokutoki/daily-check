@@ -459,6 +459,16 @@
 <script>
 const KEY = 'med-tracker-v2';
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[ch]);
+}
+
 const SLOTS = [
   { id:'wake',      name:'起床直後',  emoji:'🌅', timing:'目覚めたらすぐ',  color:'#60A5FA', due:9  },
   { id:'breakfast', name:'朝食後',    emoji:'☀️', timing:'朝食のあと',      color:'#F59E0B', due:11 },
@@ -822,8 +832,8 @@ function renderSummary() {
     memosCard.style.display = 'block';
     memosEl.innerHTML = memoEntries.map(m =>
       `<div class="summary-memo-item">
-        <div class="summary-memo-date">${m.date}</div>
-        <div class="summary-memo-text">${m.text}</div>
+        <div class="summary-memo-date">${escapeHtml(m.date)}</div>
+        <div class="summary-memo-text">${escapeHtml(m.text)}</div>
       </div>`
     ).join('');
   }
